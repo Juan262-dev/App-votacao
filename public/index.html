@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Votação Exclusiva</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#121212">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('votacao')">🗳️ Votação</button>
+      <button class="tab-btn" onclick="switchTab('sugestoes')">💡 Sugestões</button>
+    </div>
+
+    <!-- ABA VOTAÇÃO -->
+    <div id="tab-votacao" class="tab-content active">
+      <h2>Votação Exclusiva</h2>
+      <p class="desc">Apenas e-mails autorizados podem votar.</p>
+      
+      <div class="input-group">
+        <label for="emailVoto">Seu E-mail Autorizado:</label>
+        <input type="text" id="emailVoto" placeholder="seu-email@exemplo.com" required autocomplete="off">
+      </div>
+      
+      <form id="voteForm">
+        <div id="opcoesContainer" class="opcoes-list"></div>
+        <button type="submit">Confirmar Voto</button>
+      </form>
+      
+      <div id="msgVoto" class="mensagem"></div>
+      <hr>
+      <button onclick="carregarResultados()" class="btn-secundario">Ver Placar Parcial</button>
+      <div id="resultadosContainer" class="resultados-list"></div>
+    </div>
+
+    <!-- ABA SUGESTÕES -->
+    <div id="tab-sugestoes" class="tab-content">
+      <h2>Mande sua Sugestão</h2>
+      <p class="desc">Sua mensagem vai direto para os administradores.</p>
+      <div class="input-group">
+        <label>Seu Nome / Apelido (Opcional):</label>
+        <input type="text" id="autorSugestao" placeholder="Ex: Juan">
+      </div>
+      <div class="input-group">
+        <label>Sua Sugestão:</label>
+        <textarea id="textaSugestao" rows="3" placeholder="Escreva aqui sua ideia..."></textarea>
+      </div>
+      <button onclick="enviarSugestao()">Enviar Sugestão</button>
+      <div id="msgSugestao" class="mensagem"></div>
+
+      <hr>
+
+      <!-- ÁREA RESTRITA DO ADMIN -->
+      <h2>🔒 Painel do Admin</h2>
+      <p class="desc">Digite seu e-mail de administrador para ver as mensagens.</p>
+      <div class="input-group">
+        <input type="text" id="emailAdmin" placeholder="E-mail de Admin">
+      </div>
+      <button onclick="carregarSugestoesAdmin()" class="btn-secundario">Acessar Sugestões</button>
+      <div id="msgAdmin" class="mensagem"></div>
+      <div id="listaSugestoes" class="sugestoes-list" style="margin-top: 15px;"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
