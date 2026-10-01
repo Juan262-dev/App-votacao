@@ -19,7 +19,7 @@ async function carregarSugestoesAdmin() {
   const container = document.getElementById('listaSugestoes');
 
   if (!emailInput || !emailInput.value.trim()) {
-    if (msgAdmin) msgAdmin.innerText = 'Digite um e-mail de administrador.';
+    if (msgAdmin) msgAdmin.innerText = 'Digite o e-mail de administrador.';
     return;
   }
 
@@ -27,22 +27,22 @@ async function carregarSugestoesAdmin() {
     const res = await fetch('/api/sugestoes');
     if (res.ok) {
       const sugestoes = await res.json();
-      if (msgAdmin) msgAdmin.innerText = 'Acesso concedido!';
+      if (msgAdmin) msgAdmin.innerText = 'Lista atualizada!';
       if (container) {
         container.innerHTML = '';
         if (sugestoes.length === 0) {
-          container.innerHTML = '<p style="color:#aaa;">Nenhuma sugestão encontrada.</p>';
+          container.innerHTML = '<p style="color:#aaa; text-align:center; padding:10px;">Nenhuma sugestão encontrada.</p>';
           return;
         }
         sugestoes.forEach(s => {
           const card = document.createElement('div');
-          card.style.cssText = 'background:#222; padding:10px; margin-bottom:10px; border-radius:6px; display:flex; justify-content:space-between; align-items:center; color:#fff;';
+          card.style.cssText = 'background:#222; padding:12px; margin-bottom:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; color:#fff; border:1px solid #333;';
           card.innerHTML = `
-            <div>
-              <strong>${s.autor || s.nome || 'Anónimo'}:</strong>
-              <p style="margin:4px 0 0 0;">${s.texto || ''}</p>
+            <div style="word-break: break-word; padding-right: 10px;">
+              <strong style="color:#4CAF50;">${s.autor || s.nome || 'Anónimo'}:</strong>
+              <p style="margin:5px 0 0 0; color:#ddd;">${s.texto || ''}</p>
             </div>
-            <button onclick="apagarSugestao('${s._id}')" style="background:red; color:white; border:none; border-radius:4px; padding:6px 10px; cursor:pointer; font-weight:bold;">❌</button>
+            <button onclick="apagarSugestao('${s._id}')" style="background:#ff4444; color:white; border:none; border-radius:6px; padding:8px 12px; cursor:pointer; font-weight:bold; shrink:0;">❌</button>
           `;
           container.appendChild(card);
         });
