@@ -27,48 +27,84 @@ async function carregarSugestoesAdmin() {
     const res = await fetch('/api/sugestoes');
     if (res.ok) {
       const sugestoes = await res.json();
-      if (msgAdmin) msgAdmin.innerText = 'Lista atualizada!';
+      if (msgAdmin) msgAdmin.innerText = 'Acesso concedido!';
       if (container) {
         container.innerHTML = '';
+        
+        // Botão para Zerar Votação (Exclusivo Admin)
+        const btnZerarVotos = document.createElement('button');
+        btnZerarVotos.innerText = '⚠️ Zerar Todos os Votos da Votação';
+        btnZerarVotos.style.cssText = 'background:#d9534f; color:white; border:none; border-radius:6px; padding:10px; width:100%; margin-bottom:15px; cursor:pointer; font-weight:bold;';
+        btnZerarVotos.onclick = zerarVotacaoAdmin;
+        container.appendChild(btnZerarVotos);
+
         if (sugestoes.length === 0) {
-          container.innerHTML = '<p style="color:#aaa; text-align:center; padding:10px;">Nenhuma sugestão encontrada.</p>';
+          const emptyMsg = document.createElement('p');
+          emptyMsg.style.cssText = 'color:#aaa; text-align:center; padding:10px;';
+          emptyMsg.innerText = 'Nenhuma sugestão encontrada.';
+          container.appendChild(emptyMsg);
           return;
         }
+
         sugestoes.forEach(s => {
           const card = document.createElement('div');
           card.style.cssText = 'background:#222; padding:12px; margin-bottom:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; color:#fff; border:1px solid #333;';
-          card.innerHTML = `
-            <div style="word-break: break-word; padding-right: 10px;">
-              <strong style="color:#4CAF50;">${s.autor || s.nome || 'Anónimo'}:</strong>
-              <p style="margin:5px 0 0 0; color:#ddd;">${s.texto || ''}</p>
-            </div>
-            <button onclick="apagarSugestao('${s._id}')" style="background:#ff4444; color:white; border:none; border-radius:6px; padding:8px 12px; cursor:pointer; font-weight:bold; shrink:0;">❌</button>
-          `;
+          
+          const textoDiv = document.createElement('div');
+          textoDiv.style.cssText = 'word-break: break-word; padding-right: 10px;';
+          textoDiv.innerHTML = `<strong style="color:#4CAF50;">${s.autor || s.nome || 'Anónimo'}:</strong><p style="margin:4px 0 0 0; color:#ddd;">${s.texto || ''}</p>`;
+          
+          const btnApagar = document.createElement('button');
+          btnApagar.innerText = '❌ Apagar';
+          btnApagar.style.cssText = 'background:#ff4444; color:white; border:none; border-radius:6px; padding:8px 12px; cursor:pointer; font-weight:bold; flex-shrink:0;';
+          btnApagar.onclick = function() { apagarSugestao(s._id); };
+
+          card.appendChild(textoDiv);
+          card.appendChild(btnApagar);
           container.appendChild(card);
         });
       }
     }
   } catch (err) {
-    if (msgAdmin) msgAdmin.innerText = 'Erro ao carregar sugestões.';
+    if (msgAdmin) msgAdmin.innerText = 'Erro ao carregar dados do admin.';
     console.error(err);
   }
 }
 
-// Função para apagar 1 sugestão
+// Apagar 1 sugestão específica
 async function apagarSugestao(id) {
-  if (confirm('Tem certeza que quer apagar esta sugestão?')) {
+  if (confirm('Tem certeza que deseja apagar esta sugestão?')) {
     try {
       const res = await fetch(`/api/sugestoes/${id}`, { method: 'DELETE' });
       if (res.ok) {
         carregarSugestoesAdmin();
+      } else {
+        alert('Erro ao apagar a sugestão.');
       }
     } catch (err) {
-      alert('Erro ao apagar sugestão.');
+      alert('Erro de conexão ao apagar sugestão.');
     }
   }
 }
 
-// Enviar Sugestão
+// Zerar todos os votos (Admin)
+async function zerarVotacaoAdmin() {
+  if (confirm('ATENÇÃO: Tem certeza que deseja ZERAR todos os votos da votação? Esta ação não pode ser desfeita!')) {
+    try {
+      const res = await fetch('/api/votos/zerar', { method: 'DELETE' });
+      if (res.ok) {
+        alert('Votação zerada com sucesso!');
+        if (typeof carregarResultados === 'function') carregarResultados();
+      } else {
+        alert('Erro ao zerar votação.');
+      }
+    } catch (err) {
+      alert('Erro de conexão ao zerar votação.');
+    }
+  }
+}
+
+// Enviar Sugestão (Usuários comuns)
 async function enviarSugestao() {
   const autor = document.getElementById('autorSugestao').value;
   const texto = document.getElementById('textaSugestao').value;

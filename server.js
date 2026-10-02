@@ -75,6 +75,16 @@ app.delete('/api/sugestoes/:id', async (req, res) => {
   }
 });
 
+// Rota para zerar todos os votos de uma vez (Admin)
+app.delete('/api/votos', async (req, res) => {
+  try {
+    await votosDB.remove({}, { multi: true });
+    res.json({ message: 'Todos os votos foram zerados!' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });
